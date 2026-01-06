@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Download, Search, Upload, Trash2, Loader2 } from 'lucide-react';
+import { FileText, Download, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,7 +14,8 @@ interface ScoreItem {
   title: string;
   description: string | null;
   file_url: string;
-  file_name: string;
+  file_name: string | null;
+  content_type: string;
   created_at: string;
 }
 
@@ -52,10 +53,11 @@ const Scores = () => {
     
     setDeletingId(item.id);
     try {
-      const urlParts = item.file_url.split('/');
-      const filePath = urlParts.slice(-2).join('/');
-      
-      await supabase.storage.from('scores').remove([filePath]);
+      if (item.content_type === 'file') {
+        const urlParts = item.file_url.split('/');
+        const filePath = urlParts.slice(-2).join('/');
+        await supabase.storage.from('scores').remove([filePath]);
+      }
       
       const { error } = await supabase.from('scores').delete().eq('id', item.id);
       if (error) throw error;
@@ -153,7 +155,7 @@ const Scores = () => {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
                     <p className="text-sm text-muted-foreground truncate">
-                      {item.description || item.file_name}
+                      {item.description || item.file_name || (item.content_type === 'url' ? 'External link' : '')}
                     </p>
                   </div>
                   <div className="flex gap-2">
@@ -164,7 +166,7 @@ const Scores = () => {
                       asChild
                     >
                       <a href={item.file_url} target="_blank" rel="noopener noreferrer">
-                        <Download size={18} />
+                        {item.content_type === 'url' ? <ExternalLink size={18} /> : <Download size={18} />}
                       </a>
                     </Button>
                     {isAdmin && (

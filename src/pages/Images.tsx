@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, X, Search, Grid3X3, LayoutGrid, Upload, Trash2, Loader2 } from 'lucide-react';
+import { Image as ImageIcon, X, Search, Grid3X3, LayoutGrid, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +13,8 @@ interface ImageItem {
   title: string;
   description: string | null;
   file_url: string;
-  file_name: string;
+  file_name: string | null;
+  content_type: string;
   created_at: string;
 }
 
@@ -54,10 +55,11 @@ const Images = () => {
     
     setDeletingId(item.id);
     try {
-      const urlParts = item.file_url.split('/');
-      const filePath = urlParts.slice(-2).join('/');
-      
-      await supabase.storage.from('images').remove([filePath]);
+      if (item.content_type === 'file') {
+        const urlParts = item.file_url.split('/');
+        const filePath = urlParts.slice(-2).join('/');
+        await supabase.storage.from('images').remove([filePath]);
+      }
       
       const { error } = await supabase.from('images').delete().eq('id', item.id);
       if (error) throw error;
