@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { AppSidebar } from './AppSidebar';
+import { MiniPlayer } from '@/components/MiniPlayer';
+import { useAudioPlayer } from '@/contexts/AudioPlayerContext';
 
 export const AppLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { currentTrack } = useAudioPlayer();
 
   return (
     <div className="min-h-screen bg-background">
@@ -31,10 +34,13 @@ export const AppLayout = () => {
         </header>
 
         {/* Page content */}
-        <main className="p-4 lg:p-8">
+        <main className={`p-4 lg:p-8 ${currentTrack ? 'pb-24' : ''}`}>
           <Outlet />
         </main>
       </div>
+
+      {/* Persistent Mini Player */}
+      <MiniPlayer />
     </div>
   );
 };
