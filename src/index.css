@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 40 33% 97%;
+    --foreground: 195 70% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 195 70% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 195 70% 20%;
+
+    --primary: 320 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 195 65% 35%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 40 20% 92%;
+    --muted-foreground: 195 30% 40%;
+
+    --accent: 320 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 195 20% 85%;
+    --input: 195 20% 85%;
+    --ring: 320 85% 45%;
+
+    --radius: 0.75rem;
+
+    /* Custom Victory Resources colors - inspired by choir image */
+    --magenta: 320 85% 45%;
+    --magenta-light: 320 85% 60%;
+    --magenta-dark: 320 90% 35%;
+    --teal: 195 65% 35%;
+    --teal-light: 195 55% 50%;
+    --teal-dark: 195 70% 25%;
+    --gold: 320 85% 55%;
+    --gold-light: 320 85% 70%;
+    --gold-dark: 320 90% 40%;
+    --cream: 40 33% 97%;
+
+    /* Gradients */
+    --gradient-magenta: linear-gradient(135deg, hsl(320 85% 45%), hsl(320 90% 35%));
+    --gradient-teal: linear-gradient(135deg, hsl(195 65% 35%), hsl(195 70% 25%));
+    --gradient-hero: linear-gradient(135deg, hsl(320 90% 35%) 0%, hsl(320 85% 45%) 50%, hsl(320 85% 55%) 100%);
+
+    /* Shadows */
+    --shadow-magenta: 0 4px 20px -4px hsl(320 85% 45% / 0.4);
+    --shadow-teal: 0 4px 20px -4px hsl(195 65% 35% / 0.3);
+    --shadow-card: 0 4px 20px -4px hsl(195 70% 20% / 0.08);
+    --shadow-card-hover: 0 8px 30px -8px hsl(195 70% 20% / 0.15);
+
+    --sidebar-background: 195 65% 35%;
+    --sidebar-foreground: 40 33% 97%;
+    --sidebar-primary: 320 85% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 195 55% 45%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 195 55% 45%;
+    --sidebar-ring: 320 85% 50%;
+  }
+
+  .dark {
+    --background: 195 40% 8%;
+    --foreground: 40 33% 96%;
+
+    --card: 195 40% 12%;
+    --card-foreground: 40 33% 96%;
+
+    --popover: 195 40% 12%;
+    --popover-foreground: 40 33% 96%;
+
+    --primary: 320 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 195 55% 45%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 195 40% 18%;
+    --muted-foreground: 195 20% 65%;
+
+    --accent: 320 85% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 195 40% 20%;
+    --input: 195 40% 20%;
+    --ring: 320 85% 55%;
+
+    --sidebar-background: 195 50% 10%;
+    --sidebar-foreground: 40 33% 96%;
+    --sidebar-primary: 320 85% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 195 45% 20%;
+    --sidebar-accent-foreground: 40 33% 96%;
+    --sidebar-border: 195 45% 20%;
+    --sidebar-ring: 320 85% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground font-semibold py-3 px-6 rounded-lg 
+           transition-all duration-300 hover:shadow-[var(--shadow-magenta)] 
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground font-semibold py-3 px-6 rounded-lg 
+           transition-all duration-300 hover:opacity-90 
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-gold {
+    @apply bg-accent text-accent-foreground font-semibold py-3 px-6 rounded-lg 
+           transition-all duration-300 hover:shadow-[var(--shadow-magenta)] 
+           hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-[var(--shadow-card-hover)] 
+           hover:-translate-y-1;
+  }
+
+  .text-gradient-magenta {
+    @apply bg-clip-text text-transparent;
+    background-image: var(--gradient-magenta);
+  }
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .sidebar-gradient {
+    background: var(--gradient-teal);
+  }
+
+  .musical-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d946ef' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-left {
+    animation: slideInLeft 0.3s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
