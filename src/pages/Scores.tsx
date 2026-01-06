@@ -1,20 +1,80 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Download, Eye, Search, Filter } from 'lucide-react';
+import { FileText, Download, Search, Upload, Trash2, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserRole } from '@/hooks/useUserRole';
+import ContentUploadDialog from '@/components/ContentUploadDialog';
+import { toast } from 'sonner';
 
-const voiceParts = ['All', 'Soprano', 'Alto', 'Tenor', 'Bass'];
-
-const placeholderScores = [
-  { id: 1, title: 'Amazing Grace - Full Score', part: 'All', pages: 4 },
-  { id: 2, title: 'Total Praise - Soprano', part: 'Soprano', pages: 2 },
-  { id: 3, title: 'How Great Thou Art - Alto', part: 'Alto', pages: 3 },
-  { id: 4, title: 'Hallelujah Chorus - Tenor', part: 'Tenor', pages: 5 },
-];
+interface ScoreItem {
+  id: string;
+  title: string;
+  description: string | null;
+  file_url: string;
+  file_name: string;
+  created_at: string;
+}
 
 const Scores = () => {
+  const { role, loading: roleLoading } = useUserRole();
+  const [items, setItems] = useState<ScoreItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const isAdmin = role === 'admin';
+
+  const fetchItems = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('scores')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching scores:', error);
+      toast.error('Failed to load scores');
+    } else {
+      setItems(data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const handleDelete = async (item: ScoreItem) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    
+    setDeletingId(item.id);
+    try {
+      const urlParts = item.file_url.split('/');
+      const filePath = urlParts.slice(-2).join('/');
+      
+      await supabase.storage.from('scores').remove([filePath]);
+      
+      const { error } = await supabase.from('scores').delete().eq('id', item.id);
+      if (error) throw error;
+      
+      toast.success('Item deleted successfully');
+      fetchItems();
+    } catch (error: any) {
+      toast.error('Failed to delete item');
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const filteredItems = items.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
@@ -23,14 +83,28 @@ const Scores = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-navy-light/10 flex items-center justify-center text-navy-light">
-            <FileText size={24} />
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-navy-light/10 flex items-center justify-center text-navy-light">
+              <FileText size={24} />
+            </div>
+            <h1 className="font-display text-3xl font-bold text-foreground">Sheet Music</h1>
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground">Sheet Music</h1>
+          {isAdmin && (
+            <ContentUploadDialog
+              contentType="scores"
+              acceptedFileTypes=".pdf,.doc,.docx"
+              onUploadComplete={fetchItems}
+            >
+              <Button className="flex items-center gap-2">
+                <Upload size={16} />
+                Upload Score
+              </Button>
+            </ContentUploadDialog>
+          )}
         </div>
         <p className="text-muted-foreground">
-          Access and download choir scores organized by voice parts
+          Access and download choir scores and sheet music
         </p>
       </motion.div>
 
@@ -39,87 +113,99 @@ const Scores = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="mb-6"
+        className="mb-8"
       >
-        <div className="relative">
+        <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search scores..." className="pl-10" />
+          <Input 
+            placeholder="Search scores..." 
+            className="pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </motion.div>
 
-      {/* Voice Part Tabs */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <Tabs defaultValue="All" className="w-full">
-          <TabsList className="mb-6 flex-wrap h-auto gap-2 bg-transparent p-0">
-            {voiceParts.map((part) => (
-              <TabsTrigger
-                key={part}
-                value={part}
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-4 py-2 rounded-full border border-border"
-              >
-                {part}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {voiceParts.map((part) => (
-            <TabsContent key={part} value={part}>
-              <div className="grid gap-4">
-                {placeholderScores
-                  .filter((score) => part === 'All' || score.part === part)
-                  .map((score, index) => (
-                    <motion.div
-                      key={score.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * index }}
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : filteredItems.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="grid gap-4"
+        >
+          {filteredItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * index }}
+            >
+              <Card className="card-hover">
+                <CardContent className="flex items-center gap-4 p-4">
+                  <div className="w-12 h-12 rounded-lg bg-navy/10 flex items-center justify-center text-navy">
+                    <FileText size={24} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {item.description || item.file_name}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-muted-foreground hover:text-gold"
+                      asChild
                     >
-                      <Card className="card-hover">
-                        <CardContent className="flex items-center gap-4 p-4">
-                          <div className="w-12 h-12 rounded-lg bg-navy/10 flex items-center justify-center text-navy">
-                            <FileText size={24} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-semibold text-foreground truncate">{score.title}</h3>
-                            <p className="text-sm text-muted-foreground">{score.pages} pages • PDF</p>
-                          </div>
-                          <div className="flex gap-2">
-                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-                              <Eye size={18} />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-gold">
-                              <Download size={18} />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </motion.div>
-                  ))}
-              </div>
-            </TabsContent>
+                      <a href={item.file_url} target="_blank" rel="noopener noreferrer">
+                        <Download size={18} />
+                      </a>
+                    </Button>
+                    {isAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(item)}
+                        disabled={deletingId === item.id}
+                      >
+                        {deletingId === item.id ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={18} />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
-        </Tabs>
-      </motion.div>
-
-      {/* Empty state */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-8 text-center p-8 border-2 border-dashed border-border rounded-xl"
-      >
-        <FileText className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-        <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-          Upload coming soon
-        </h3>
-        <p className="text-muted-foreground text-sm max-w-md mx-auto">
-          Score upload functionality will be available soon. Stay tuned!
-        </p>
-      </motion.div>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-center p-8 border-2 border-dashed border-border rounded-xl"
+        >
+          <FileText className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+          <h3 className="font-display text-lg font-semibold text-foreground mb-2">
+            {searchQuery ? 'No results found' : 'No scores uploaded yet'}
+          </h3>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto">
+            {isAdmin 
+              ? "Click the 'Upload Score' button to add sheet music."
+              : 'Check back later for new score uploads.'}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 };

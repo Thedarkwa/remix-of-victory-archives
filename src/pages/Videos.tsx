@@ -1,16 +1,81 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Video as VideoIcon, Play, Calendar, Search } from 'lucide-react';
+import { Video as VideoIcon, Play, Search, Upload, Trash2, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { useUserRole } from '@/hooks/useUserRole';
+import ContentUploadDialog from '@/components/ContentUploadDialog';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
 
-const placeholderVideos = [
-  { id: 1, title: 'Sunday Service Performance', date: 'Dec 15, 2024', duration: '12:34', event: 'Sunday Service' },
-  { id: 2, title: 'Christmas Carol Night', date: 'Dec 24, 2024', duration: '45:20', event: 'Christmas' },
-  { id: 3, title: 'Weekly Rehearsal Session', date: 'Dec 10, 2024', duration: '1:30:00', event: 'Rehearsal' },
-  { id: 4, title: 'Anniversary Celebration', date: 'Nov 28, 2024', duration: '25:15', event: 'Anniversary' },
-];
+interface VideoItem {
+  id: string;
+  title: string;
+  description: string | null;
+  file_url: string;
+  file_name: string;
+  created_at: string;
+}
 
 const Videos = () => {
+  const { role, loading: roleLoading } = useUserRole();
+  const [items, setItems] = useState<VideoItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const isAdmin = role === 'admin';
+
+  const fetchItems = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('videos')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching videos:', error);
+      toast.error('Failed to load videos');
+    } else {
+      setItems(data || []);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
+
+  const handleDelete = async (item: VideoItem) => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    
+    setDeletingId(item.id);
+    try {
+      const urlParts = item.file_url.split('/');
+      const filePath = urlParts.slice(-2).join('/');
+      
+      await supabase.storage.from('videos').remove([filePath]);
+      
+      const { error } = await supabase.from('videos').delete().eq('id', item.id);
+      if (error) throw error;
+      
+      toast.success('Item deleted successfully');
+      fetchItems();
+    } catch (error: any) {
+      toast.error('Failed to delete item');
+      console.error(error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const filteredItems = items.filter(item =>
+    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    item.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
@@ -19,11 +84,25 @@ const Videos = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
-            <VideoIcon size={24} />
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent">
+              <VideoIcon size={24} />
+            </div>
+            <h1 className="font-display text-3xl font-bold text-foreground">Video Gallery</h1>
           </div>
-          <h1 className="font-display text-3xl font-bold text-foreground">Video Gallery</h1>
+          {isAdmin && (
+            <ContentUploadDialog
+              contentType="videos"
+              acceptedFileTypes="video/*"
+              onUploadComplete={fetchItems}
+            >
+              <Button className="flex items-center gap-2">
+                <Upload size={16} />
+                Upload Video
+              </Button>
+            </ContentUploadDialog>
+          )}
         </div>
         <p className="text-muted-foreground">
           Watch rehearsal sessions and performance recordings
@@ -39,67 +118,93 @@ const Videos = () => {
       >
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search videos..." className="pl-10" />
+          <Input 
+            placeholder="Search videos..." 
+            className="pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </motion.div>
 
-      {/* Video Grid */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-6"
-      >
-        {placeholderVideos.map((video, index) => (
-          <motion.div
-            key={video.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 * index }}
-          >
-            <Card className="card-hover overflow-hidden">
-              {/* Video Thumbnail Placeholder */}
-              <div className="relative aspect-video bg-gradient-to-br from-navy to-navy-dark flex items-center justify-center group cursor-pointer">
-                <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/10 transition-colors" />
-                <button className="w-16 h-16 rounded-full bg-gold/90 flex items-center justify-center text-gold-foreground group-hover:scale-110 transition-transform shadow-lg">
-                  <Play size={28} className="ml-1" />
-                </button>
-                <span className="absolute bottom-3 right-3 px-2 py-1 bg-navy-dark/80 text-cream text-xs rounded">
-                  {video.duration}
-                </span>
-              </div>
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-foreground mb-2">{video.title}</h3>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Calendar size={14} />
-                    {video.date}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground text-xs">
-                    {video.event}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Empty state */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="mt-8 text-center p-8 border-2 border-dashed border-border rounded-xl"
-      >
-        <VideoIcon className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
-        <h3 className="font-display text-lg font-semibold text-foreground mb-2">
-          More videos coming soon
-        </h3>
-        <p className="text-muted-foreground text-sm max-w-md mx-auto">
-          Video upload functionality will be available soon. Capture and share your choir moments!
-        </p>
-      </motion.div>
+      {/* Loading State */}
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : filteredItems.length > 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-6"
+        >
+          {filteredItems.map((item, index) => (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * index }}
+            >
+              <Card className="card-hover overflow-hidden">
+                <a
+                  href={item.file_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative aspect-video bg-gradient-to-br from-navy to-navy-dark flex items-center justify-center group cursor-pointer block"
+                >
+                  <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/10 transition-colors" />
+                  <div className="w-16 h-16 rounded-full bg-gold/90 flex items-center justify-center text-gold-foreground group-hover:scale-110 transition-transform shadow-lg">
+                    <Play size={28} className="ml-1" />
+                  </div>
+                </a>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground truncate">
+                        {item.description || format(new Date(item.created_at), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    {isAdmin && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive flex-shrink-0"
+                        onClick={() => handleDelete(item)}
+                        disabled={deletingId === item.id}
+                      >
+                        {deletingId === item.id ? (
+                          <Loader2 size={18} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={18} />
+                        )}
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-center p-8 border-2 border-dashed border-border rounded-xl"
+        >
+          <VideoIcon className="mx-auto h-12 w-12 text-muted-foreground/50 mb-4" />
+          <h3 className="font-display text-lg font-semibold text-foreground mb-2">
+            {searchQuery ? 'No results found' : 'No videos uploaded yet'}
+          </h3>
+          <p className="text-muted-foreground text-sm max-w-md mx-auto">
+            {isAdmin 
+              ? "Click the 'Upload Video' button to add a video."
+              : 'Check back later for new video uploads.'}
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 };

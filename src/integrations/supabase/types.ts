@@ -14,6 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
+      documents: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
+      images: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
+      music: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -44,6 +143,39 @@ export type Database = {
         }
         Relationships: []
       }
+      scores: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -62,6 +194,39 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_url: string
+          id: string
+          title: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          title: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          uploaded_by?: string
         }
         Relationships: []
       }
