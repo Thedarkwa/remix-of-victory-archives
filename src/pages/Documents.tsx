@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FolderOpen, FileText, Download, Search, Upload, Trash2, Loader2 } from 'lucide-react';
+import { FolderOpen, FileText, Download, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,11 +15,13 @@ interface DocumentItem {
   title: string;
   description: string | null;
   file_url: string;
-  file_name: string;
+  file_name: string | null;
+  content_type: string;
   created_at: string;
 }
 
-const getFileExtension = (filename: string) => {
+const getFileExtension = (filename: string | null) => {
+  if (!filename) return 'LINK';
   return filename.split('.').pop()?.toUpperCase() || 'FILE';
 };
 
@@ -57,10 +59,11 @@ const Documents = () => {
     
     setDeletingId(item.id);
     try {
-      const urlParts = item.file_url.split('/');
-      const filePath = urlParts.slice(-2).join('/');
-      
-      await supabase.storage.from('documents').remove([filePath]);
+      if (item.content_type === 'file') {
+        const urlParts = item.file_url.split('/');
+        const filePath = urlParts.slice(-2).join('/');
+        await supabase.storage.from('documents').remove([filePath]);
+      }
       
       const { error } = await supabase.from('documents').delete().eq('id', item.id);
       if (error) throw error;
@@ -172,7 +175,7 @@ const Documents = () => {
                       asChild
                     >
                       <a href={item.file_url} target="_blank" rel="noopener noreferrer">
-                        <Download size={18} />
+                        {item.content_type === 'url' ? <ExternalLink size={18} /> : <Download size={18} />}
                       </a>
                     </Button>
                     {isAdmin && (

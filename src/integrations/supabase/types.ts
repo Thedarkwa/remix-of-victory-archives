@@ -16,9 +16,10 @@ export type Database = {
     Tables: {
       documents: {
         Row: {
+          content_type: string
           created_at: string
           description: string | null
-          file_name: string
+          file_name: string | null
           file_url: string
           id: string
           title: string
@@ -26,9 +27,10 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name: string
+          file_name?: string | null
           file_url: string
           id?: string
           title: string
@@ -36,9 +38,10 @@ export type Database = {
           uploaded_by: string
         }
         Update: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name?: string
+          file_name?: string | null
           file_url?: string
           id?: string
           title?: string
@@ -49,9 +52,10 @@ export type Database = {
       }
       images: {
         Row: {
+          content_type: string
           created_at: string
           description: string | null
-          file_name: string
+          file_name: string | null
           file_url: string
           id: string
           title: string
@@ -59,9 +63,10 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name: string
+          file_name?: string | null
           file_url: string
           id?: string
           title: string
@@ -69,9 +74,10 @@ export type Database = {
           uploaded_by: string
         }
         Update: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name?: string
+          file_name?: string | null
           file_url?: string
           id?: string
           title?: string
@@ -82,9 +88,10 @@ export type Database = {
       }
       music: {
         Row: {
+          content_type: string
           created_at: string
           description: string | null
-          file_name: string
+          file_name: string | null
           file_url: string
           id: string
           title: string
@@ -92,9 +99,10 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name: string
+          file_name?: string | null
           file_url: string
           id?: string
           title: string
@@ -102,9 +110,10 @@ export type Database = {
           uploaded_by: string
         }
         Update: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name?: string
+          file_name?: string | null
           file_url?: string
           id?: string
           title?: string
@@ -145,9 +154,10 @@ export type Database = {
       }
       scores: {
         Row: {
+          content_type: string
           created_at: string
           description: string | null
-          file_name: string
+          file_name: string | null
           file_url: string
           id: string
           title: string
@@ -155,9 +165,10 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name: string
+          file_name?: string | null
           file_url: string
           id?: string
           title: string
@@ -165,9 +176,10 @@ export type Database = {
           uploaded_by: string
         }
         Update: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name?: string
+          file_name?: string | null
           file_url?: string
           id?: string
           title?: string
@@ -199,9 +211,10 @@ export type Database = {
       }
       videos: {
         Row: {
+          content_type: string
           created_at: string
           description: string | null
-          file_name: string
+          file_name: string | null
           file_url: string
           id: string
           title: string
@@ -209,9 +222,10 @@ export type Database = {
           uploaded_by: string
         }
         Insert: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name: string
+          file_name?: string | null
           file_url: string
           id?: string
           title: string
@@ -219,9 +233,10 @@ export type Database = {
           uploaded_by: string
         }
         Update: {
+          content_type?: string
           created_at?: string
           description?: string | null
-          file_name?: string
+          file_name?: string | null
           file_url?: string
           id?: string
           title?: string

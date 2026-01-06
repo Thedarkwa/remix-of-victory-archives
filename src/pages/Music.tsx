@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Music as MusicIcon, Play, Search, Upload, Trash2, Loader2 } from 'lucide-react';
+import { Music as MusicIcon, Play, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,7 +14,8 @@ interface MusicItem {
   title: string;
   description: string | null;
   file_url: string;
-  file_name: string;
+  file_name: string | null;
+  content_type: string;
   created_at: string;
 }
 
@@ -52,11 +53,12 @@ const Music = () => {
     
     setDeletingId(item.id);
     try {
-      // Extract file path from URL
-      const urlParts = item.file_url.split('/');
-      const filePath = urlParts.slice(-2).join('/');
-      
-      await supabase.storage.from('music').remove([filePath]);
+      // Only delete from storage if it's a file upload
+      if (item.content_type === 'file') {
+        const urlParts = item.file_url.split('/');
+        const filePath = urlParts.slice(-2).join('/');
+        await supabase.storage.from('music').remove([filePath]);
+      }
       
       const { error } = await supabase.from('music').delete().eq('id', item.id);
       if (error) throw error;
@@ -154,12 +156,16 @@ const Music = () => {
                     rel="noopener noreferrer"
                     className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center text-gold hover:bg-gold hover:text-gold-foreground transition-colors"
                   >
-                    <Play size={20} className="ml-0.5" />
+                    {item.content_type === 'url' ? (
+                      <ExternalLink size={20} />
+                    ) : (
+                      <Play size={20} className="ml-0.5" />
+                    )}
                   </a>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
                     <p className="text-sm text-muted-foreground truncate">
-                      {item.description || item.file_name}
+                      {item.description || item.file_name || (item.content_type === 'url' ? 'External link' : '')}
                     </p>
                   </div>
                   {isAdmin && (

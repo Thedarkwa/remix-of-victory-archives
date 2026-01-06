@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Video as VideoIcon, Play, Search, Upload, Trash2, Loader2 } from 'lucide-react';
+import { Video as VideoIcon, Play, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +15,8 @@ interface VideoItem {
   title: string;
   description: string | null;
   file_url: string;
-  file_name: string;
+  file_name: string | null;
+  content_type: string;
   created_at: string;
 }
 
@@ -53,10 +54,11 @@ const Videos = () => {
     
     setDeletingId(item.id);
     try {
-      const urlParts = item.file_url.split('/');
-      const filePath = urlParts.slice(-2).join('/');
-      
-      await supabase.storage.from('videos').remove([filePath]);
+      if (item.content_type === 'file') {
+        const urlParts = item.file_url.split('/');
+        const filePath = urlParts.slice(-2).join('/');
+        await supabase.storage.from('videos').remove([filePath]);
+      }
       
       const { error } = await supabase.from('videos').delete().eq('id', item.id);
       if (error) throw error;
@@ -155,7 +157,11 @@ const Videos = () => {
                 >
                   <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/10 transition-colors" />
                   <div className="w-16 h-16 rounded-full bg-gold/90 flex items-center justify-center text-gold-foreground group-hover:scale-110 transition-transform shadow-lg">
-                    <Play size={28} className="ml-1" />
+                    {item.content_type === 'url' ? (
+                      <ExternalLink size={28} />
+                    ) : (
+                      <Play size={28} className="ml-1" />
+                    )}
                   </div>
                 </a>
                 <CardContent className="p-4">
