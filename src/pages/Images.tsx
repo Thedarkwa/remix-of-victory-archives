@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Image as ImageIcon, X, Search, Grid3X3, LayoutGrid, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
+import { Image as ImageIcon, X, Search, Grid3X3, LayoutGrid, Upload, Trash2, Loader2, ExternalLink, Download } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -234,7 +234,7 @@ const Images = () => {
             onClick={() => setSelectedImage(null)}
           >
             <button
-              className="absolute top-4 right-4 p-2 text-cream/70 hover:text-cream"
+              className="absolute top-4 right-4 p-2 text-cream/70 hover:text-cream z-50"
               onClick={() => setSelectedImage(null)}
             >
               <X size={32} />
@@ -251,11 +251,24 @@ const Images = () => {
                 alt={selectedImage.title}
                 className="w-full h-full object-contain rounded-xl"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-navy-dark/90 to-transparent rounded-b-xl">
-                <h3 className="font-semibold text-cream">{selectedImage.title}</h3>
-                {selectedImage.description && (
-                  <p className="text-cream/70 text-sm">{selectedImage.description}</p>
-                )}
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-navy-dark/90 to-transparent rounded-b-xl flex items-end justify-between">
+                <div>
+                  <h3 className="font-semibold text-cream">{selectedImage.title}</h3>
+                  {selectedImage.description && (
+                    <p className="text-cream/70 text-sm">{selectedImage.description}</p>
+                  )}
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  asChild
+                  className="flex-shrink-0"
+                >
+                  <a href={selectedImage.file_url} download={selectedImage.file_name || selectedImage.title}>
+                    <Download size={16} className="mr-2" />
+                    Download
+                  </a>
+                </Button>
               </div>
             </motion.div>
           </motion.div>
