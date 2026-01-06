@@ -10,8 +10,10 @@ import {
   User,
   LogOut,
   X,
+  Shield,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserRole } from '@/hooks/useUserRole';
 import logo from '@/assets/logo.png';
 
 interface AppSidebarProps {
@@ -19,7 +21,7 @@ interface AppSidebarProps {
   onClose: () => void;
 }
 
-const navItems = [
+const baseNavItems = [
   { icon: Home, label: 'Dashboard', path: '/dashboard' },
   { icon: Music, label: 'Music', path: '/music' },
   { icon: FileText, label: 'Scores', path: '/scores' },
@@ -29,9 +31,17 @@ const navItems = [
   { icon: User, label: 'Profile', path: '/profile' },
 ];
 
+const adminNavItem = { icon: Shield, label: 'Admin', path: '/admin' };
+
 export const AppSidebar = ({ isOpen, onClose }: AppSidebarProps) => {
   const location = useLocation();
   const { signOut } = useAuth();
+  const { isAdmin } = useUserRole();
+
+  // Build nav items based on role
+  const navItems = isAdmin 
+    ? [baseNavItems[0], adminNavItem, ...baseNavItems.slice(1)]
+    : baseNavItems;
 
   const handleSignOut = async () => {
     await signOut();
