@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FolderOpen, FileText, Download, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
+import { FolderOpen, FileText, Download, Search, Upload, Trash2, Loader2, ExternalLink, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -173,11 +173,25 @@ const Documents = () => {
                       size="icon"
                       className="text-muted-foreground hover:text-primary"
                       asChild
+                      title="View"
                     >
                       <a href={item.file_url} target="_blank" rel="noopener noreferrer">
-                        {item.content_type === 'url' ? <ExternalLink size={18} /> : <Download size={18} />}
+                        {item.content_type === 'url' ? <ExternalLink size={18} /> : <Eye size={18} />}
                       </a>
                     </Button>
+                    {item.content_type === 'file' && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-muted-foreground hover:text-gold"
+                        asChild
+                        title="Download"
+                      >
+                        <a href={item.file_url} download={item.file_name || item.title}>
+                          <Download size={18} />
+                        </a>
+                      </Button>
+                    )}
                     {isAdmin && (
                       <Button
                         variant="ghost"

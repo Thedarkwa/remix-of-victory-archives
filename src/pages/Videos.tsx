@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Video as VideoIcon, Play, Search, Upload, Trash2, Loader2, ExternalLink } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Video as VideoIcon, Play, Search, Upload, Trash2, Loader2, ExternalLink, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,12 +20,18 @@ interface VideoItem {
   created_at: string;
 }
 
+const getYouTubeId = (url: string) => {
+  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return match ? match[1] : null;
+};
+
 const Videos = () => {
   const { role, loading: roleLoading } = useUserRole();
   const [items, setItems] = useState<VideoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [playingVideo, setPlayingVideo] = useState<VideoItem | null>(null);
 
   const isAdmin = role === 'admin';
 
@@ -64,6 +70,7 @@ const Videos = () => {
       if (error) throw error;
       
       toast.success('Item deleted successfully');
+      setPlayingVideo(null);
       fetchItems();
     } catch (error: any) {
       toast.error('Failed to delete item');
@@ -71,6 +78,10 @@ const Videos = () => {
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const handlePlay = (item: VideoItem) => {
+    setPlayingVideo(item);
   };
 
   const filteredItems = items.filter(item =>
@@ -149,21 +160,26 @@ const Videos = () => {
               transition={{ delay: 0.1 * index }}
             >
               <Card className="card-hover overflow-hidden">
-                <a
-                  href={item.file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative aspect-video bg-gradient-to-br from-navy to-navy-dark flex items-center justify-center group cursor-pointer block"
+                <button
+                  onClick={() => handlePlay(item)}
+                  className="relative aspect-video bg-gradient-to-br from-navy to-navy-dark flex items-center justify-center group cursor-pointer w-full"
                 >
-                  <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/10 transition-colors" />
-                  <div className="w-16 h-16 rounded-full bg-gold/90 flex items-center justify-center text-gold-foreground group-hover:scale-110 transition-transform shadow-lg">
-                    {item.content_type === 'url' ? (
+                  {item.content_type === 'url' && getYouTubeId(item.file_url) && (
+                    <img 
+                      src={`https://img.youtube.com/vi/${getYouTubeId(item.file_url)}/hqdefault.jpg`}
+                      alt={item.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
+                  <div className="w-16 h-16 rounded-full bg-gold/90 flex items-center justify-center text-gold-foreground group-hover:scale-110 transition-transform shadow-lg z-10">
+                    {item.content_type === 'url' && !getYouTubeId(item.file_url) ? (
                       <ExternalLink size={28} />
                     ) : (
                       <Play size={28} className="ml-1" />
                     )}
                   </div>
-                </a>
+                </button>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
@@ -211,6 +227,67 @@ const Videos = () => {
           </p>
         </motion.div>
       )}
+
+      {/* Video Player Modal */}
+      <AnimatePresence>
+        {playingVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+            onClick={() => setPlayingVideo(null)}
+          >
+            <button
+              className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-50"
+              onClick={() => setPlayingVideo(null)}
+            >
+              <X size={32} />
+            </button>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-5xl aspect-video relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {playingVideo.content_type === 'url' && getYouTubeId(playingVideo.file_url) ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYouTubeId(playingVideo.file_url)}?autoplay=1`}
+                  className="w-full h-full rounded-xl"
+                  allow="autoplay; encrypted-media"
+                  allowFullScreen
+                />
+              ) : playingVideo.content_type === 'url' ? (
+                <div className="w-full h-full flex items-center justify-center bg-navy rounded-xl">
+                  <a 
+                    href={playingVideo.file_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-gold hover:underline"
+                  >
+                    <ExternalLink size={24} />
+                    Open external link
+                  </a>
+                </div>
+              ) : (
+                <video
+                  src={playingVideo.file_url}
+                  controls
+                  autoPlay
+                  className="w-full h-full rounded-xl"
+                />
+              )}
+              <div className="absolute -bottom-12 left-0 right-0 text-center">
+                <h3 className="font-semibold text-white">{playingVideo.title}</h3>
+                {playingVideo.description && (
+                  <p className="text-white/70 text-sm">{playingVideo.description}</p>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
