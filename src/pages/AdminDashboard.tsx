@@ -30,8 +30,8 @@ interface UserWithRole {
   profile?: {
     full_name: string | null;
     avatar_url: string | null;
+    email: string | null;
   };
-  email?: string;
 }
 
 const AdminDashboard = () => {
@@ -58,7 +58,7 @@ const AdminDashboard = () => {
       const userIds = rolesData?.map(r => r.user_id) || [];
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
-        .select('user_id, full_name, avatar_url')
+        .select('user_id, full_name, avatar_url, email')
         .in('user_id', userIds);
 
       if (profilesError) throw profilesError;
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
                       <TableRow key={user.id}>
                         <TableCell>
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                               {user.profile?.avatar_url ? (
                                 <img 
                                   src={user.profile.avatar_url} 
@@ -249,10 +249,10 @@ const AdminDashboard = () => {
                             </div>
                             <div>
                               <p className="font-medium">
-                                {user.profile?.full_name || 'Unknown User'}
+                                {user.profile?.full_name || user.profile?.email?.split('@')[0] || 'Unknown User'}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {user.user_id.slice(0, 8)}...
+                                {user.profile?.email || 'No email'}
                               </p>
                             </div>
                           </div>
