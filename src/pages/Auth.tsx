@@ -141,11 +141,6 @@ const Auth = () => {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="w-full max-w-md"
         >
-          {/* Decorative white card */}
-          <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-xl p-5 sm:p-6 border border-white/50 relative overflow-hidden">
-            {/* Decorative gradient accent */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-magenta to-magenta-light" />
-            
             {/* Loading overlay */}
             <AnimatePresence>
               {isLoading && (
@@ -153,18 +148,18 @@ const Auth = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center rounded-2xl"
+                  className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex flex-col items-center justify-center"
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full"
+                    className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full"
                   />
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="mt-4 text-sm text-muted-foreground font-medium"
+                    className="mt-4 text-sm text-white font-medium"
                   >
                     {isLogin ? 'Signing in...' : 'Creating account...'}
                   </motion.p>
@@ -178,14 +173,14 @@ const Auth = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex bg-muted rounded-lg p-1 mb-4"
+              className="flex bg-white/10 backdrop-blur-sm rounded-lg p-1 mb-6 border border-white/20"
             >
               <button
                 onClick={() => setIsLogin(true)}
                 className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
                   isLogin
-                    ? 'bg-background shadow-sm text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-white/90 shadow-sm text-foreground'
+                    : 'text-white hover:text-white/80'
                 }`}
               >
                 Login
@@ -194,8 +189,8 @@ const Auth = () => {
                 onClick={() => setIsLogin(false)}
                 className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${
                   !isLogin
-                    ? 'bg-background shadow-sm text-foreground'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-white/90 shadow-sm text-foreground'
+                    : 'text-white hover:text-white/80'
                 }`}
               >
                 Sign Up
@@ -219,19 +214,19 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.3 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="login-email" className="text-foreground font-medium">Email</Label>
+                  <Label htmlFor="login-email" className="text-white font-medium">Email</Label>
                   <div className="relative group">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="login-email"
                       type="email"
                       placeholder="your@email.com"
-                      className="pl-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...loginForm.register('email')}
                     />
                   </div>
                   {loginForm.formState.errors.email && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {loginForm.formState.errors.email.message}
                     </p>
                   )}
@@ -243,26 +238,26 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.4 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="login-password" className="text-foreground font-medium">Password</Label>
+                  <Label htmlFor="login-password" className="text-white font-medium">Password</Label>
                   <div className="relative group">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 pr-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...loginForm.register('password')}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-10"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
                   {loginForm.formState.errors.password && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {loginForm.formState.errors.password.message}
                     </p>
                   )}
@@ -274,7 +269,7 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.5 }}
                   className="text-right"
                 >
-                  <button type="button" className="text-sm text-primary hover:text-primary/80">
+                  <button type="button" className="text-sm text-white/80 hover:text-white">
                     Forgot password?
                   </button>
                 </motion.div>
@@ -305,19 +300,19 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.1 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="signup-name" className="text-foreground font-medium">Full Name</Label>
+                  <Label htmlFor="signup-name" className="text-white font-medium">Full Name</Label>
                   <div className="relative group">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="signup-name"
                       type="text"
                       placeholder="John Doe"
-                      className="pl-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('fullName')}
                     />
                   </div>
                   {signupForm.formState.errors.fullName && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {signupForm.formState.errors.fullName.message}
                     </p>
                   )}
@@ -329,19 +324,19 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.2 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="signup-email" className="text-foreground font-medium">Email</Label>
+                  <Label htmlFor="signup-email" className="text-white font-medium">Email</Label>
                   <div className="relative group">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="signup-email"
                       type="email"
                       placeholder="your@email.com"
-                      className="pl-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('email')}
                     />
                   </div>
                   {signupForm.formState.errors.email && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {signupForm.formState.errors.email.message}
                     </p>
                   )}
@@ -353,26 +348,26 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.3 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="signup-password" className="text-foreground font-medium">Password</Label>
+                  <Label htmlFor="signup-password" className="text-white font-medium">Password</Label>
                   <div className="relative group">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="signup-password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 pr-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('password')}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-10"
                     >
                       {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                     </button>
                   </div>
                   {signupForm.formState.errors.password && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {signupForm.formState.errors.password.message}
                     </p>
                   )}
@@ -384,19 +379,19 @@ const Auth = () => {
                   transition={{ duration: 0.4, delay: 0.4 }}
                   className="space-y-1"
                 >
-                  <Label htmlFor="signup-confirm" className="text-foreground font-medium">Confirm Password</Label>
+                  <Label htmlFor="signup-confirm" className="text-white font-medium">Confirm Password</Label>
                   <div className="relative group">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors z-10" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60 group-focus-within:text-white transition-colors z-10" />
                     <Input
                       id="signup-confirm"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 bg-background border-border focus:border-primary transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('confirmPassword')}
                     />
                   </div>
                   {signupForm.formState.errors.confirmPassword && (
-                    <p className="text-sm text-destructive">
+                    <p className="text-sm text-red-300">
                       {signupForm.formState.errors.confirmPassword.message}
                     </p>
                   )}
@@ -423,10 +418,10 @@ const Auth = () => {
             className="relative my-6"
           >
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border" />
+              <div className="w-full border-t border-white/30" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-muted-foreground">or continue with</span>
+              <span className="px-4 text-white/80">or continue with</span>
             </div>
           </motion.div>
 
@@ -439,7 +434,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="outline"
-              className="w-full border-border hover:bg-muted transition-all duration-300"
+              className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 transition-all duration-300"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
             >
@@ -464,7 +459,6 @@ const Auth = () => {
               Continue with Google
             </Button>
           </motion.div>
-          </div>
         </motion.div>
       </div>
     </div>
