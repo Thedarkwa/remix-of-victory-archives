@@ -142,7 +142,7 @@ const Auth = () => {
           className="w-full max-w-md"
         >
           {/* Decorative white card */}
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 sm:p-8 border border-white/50 relative overflow-hidden">
+          <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-xl p-5 sm:p-6 border border-white/50 relative overflow-hidden">
             {/* Decorative gradient accent */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-magenta to-magenta-light" />
             
@@ -173,16 +173,16 @@ const Auth = () => {
             </AnimatePresence>
 
             {/* Card title */}
-            <div className="text-center mb-6">
+            <div className="text-center mb-4">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/10 to-magenta/10 flex items-center justify-center"
+                className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-primary/10 to-magenta/10 flex items-center justify-center"
               >
-                <img src={logo} alt="Victory Vocals" className="h-10 w-auto" />
+                <img src={logo} alt="Victory Vocals" className="h-7 w-auto" />
               </motion.div>
-              <h1 className="font-display text-2xl font-bold text-foreground">
+              <h1 className="font-display text-xl font-bold text-foreground">
                 {isLogin ? 'Welcome Back' : 'Join Victory Vocals'}
               </h1>
               <p className="text-sm text-muted-foreground mt-1">
@@ -195,7 +195,7 @@ const Auth = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
-              className="flex bg-muted rounded-lg p-1 mb-6"
+              className="flex bg-muted rounded-lg p-1 mb-4"
             >
               <button
                 onClick={() => setIsLogin(true)}
