@@ -172,15 +172,6 @@ const Auth = () => {
               )}
             </AnimatePresence>
 
-            {/* Card title */}
-            <div className="text-center mb-4">
-              <h1 className="font-display text-xl font-bold text-foreground">
-                {isLogin ? 'Welcome Back' : 'Join Victory Vocals'}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {isLogin ? 'Sign in to access your resources' : 'Create your account to get started'}
-              </p>
-            </div>
 
             {/* Tab switcher */}
             <motion.div 
