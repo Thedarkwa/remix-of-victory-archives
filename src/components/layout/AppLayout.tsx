@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { Menu } from 'lucide-react';
 import { AppSidebar } from './AppSidebar';
@@ -12,6 +12,10 @@ export const AppLayout = () => {
   const { currentTrack } = useAudioPlayer();
   const { user } = useAuth();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  
+  // Swipe detection
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   // Fetch avatar URL
   useEffect(() => {
@@ -31,6 +35,47 @@ export const AppLayout = () => {
     
     fetchAvatar();
   }, [user?.id]);
+
+  // Swipe gesture handlers
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      touchEndX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+      if (touchStartX.current === null || touchEndX.current === null) return;
+      
+      const swipeDistance = touchEndX.current - touchStartX.current;
+      const minSwipeDistance = 50;
+      
+      // Swipe right to open (only if starting from left edge)
+      if (swipeDistance > minSwipeDistance && touchStartX.current < 50) {
+        setSidebarOpen(true);
+      }
+      
+      // Swipe left to close
+      if (swipeDistance < -minSwipeDistance && sidebarOpen) {
+        setSidebarOpen(false);
+      }
+      
+      touchStartX.current = null;
+      touchEndX.current = null;
+    };
+
+    document.addEventListener('touchstart', handleTouchStart);
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [sidebarOpen]);
 
   const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 

@@ -137,18 +137,6 @@ const Dashboard = () => {
           </motion.div>
         ))}
       </motion.div>
-
-      {/* Quick Tips */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="mt-12 text-center"
-      >
-        <p className="text-sm text-muted-foreground">
-          💡 Tip: Use the sidebar navigation to quickly access any section
-        </p>
-      </motion.div>
     </div>
   );
 };
