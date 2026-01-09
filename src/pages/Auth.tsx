@@ -221,7 +221,7 @@ const Auth = () => {
                       id="login-email"
                       type="email"
                       placeholder="your@email.com"
-                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...loginForm.register('email')}
                     />
                   </div>
@@ -245,7 +245,7 @@ const Auth = () => {
                       id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...loginForm.register('password')}
                     />
                     <button
@@ -307,7 +307,7 @@ const Auth = () => {
                       id="signup-name"
                       type="text"
                       placeholder="John Doe"
-                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('fullName')}
                     />
                   </div>
@@ -331,7 +331,7 @@ const Auth = () => {
                       id="signup-email"
                       type="email"
                       placeholder="your@email.com"
-                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('email')}
                     />
                   </div>
@@ -355,7 +355,7 @@ const Auth = () => {
                       id="signup-password"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 pr-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('password')}
                     />
                     <button
@@ -386,7 +386,7 @@ const Auth = () => {
                       id="signup-confirm"
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all duration-300"
+                      className="pl-10 bg-white/10 border-white/30 text-white placeholder:text-white/50 hover:bg-white hover:text-foreground hover:placeholder:text-muted-foreground focus:bg-white/20 focus:border-white/50 transition-all duration-300"
                       {...signupForm.register('confirmPassword')}
                     />
                   </div>
