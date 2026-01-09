@@ -174,14 +174,6 @@ const Auth = () => {
 
             {/* Card title */}
             <div className="text-center mb-4">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="w-12 h-12 mx-auto mb-3 rounded-full bg-gradient-to-br from-primary/10 to-magenta/10 flex items-center justify-center"
-              >
-                <img src={logo} alt="Victory Vocals" className="h-7 w-auto" />
-              </motion.div>
               <h1 className="font-display text-xl font-bold text-foreground">
                 {isLogin ? 'Welcome Back' : 'Join Victory Vocals'}
               </h1>
