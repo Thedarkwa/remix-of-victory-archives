@@ -211,13 +211,13 @@ const Auth = () => {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2 }}
                 onSubmit={loginForm.handleSubmit(handleLogin)}
-                className="space-y-6"
+                className="space-y-4"
               >
                 <motion.div 
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="login-email" className="text-foreground font-medium">Email</Label>
                   <div className="relative group">
@@ -241,7 +241,7 @@ const Auth = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.4 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="login-password" className="text-foreground font-medium">Password</Label>
                   <div className="relative group">
@@ -297,13 +297,13 @@ const Auth = () => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
                 onSubmit={signupForm.handleSubmit(handleSignup)}
-                className="space-y-5"
+                className="space-y-3"
               >
                 <motion.div 
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="signup-name" className="text-foreground font-medium">Full Name</Label>
                   <div className="relative group">
@@ -327,7 +327,7 @@ const Auth = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.2 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="signup-email" className="text-foreground font-medium">Email</Label>
                   <div className="relative group">
@@ -351,7 +351,7 @@ const Auth = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.3 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="signup-password" className="text-foreground font-medium">Password</Label>
                   <div className="relative group">
@@ -382,7 +382,7 @@ const Auth = () => {
                   initial={{ opacity: 0, x: -30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.4, delay: 0.4 }}
-                  className="space-y-2"
+                  className="space-y-1"
                 >
                   <Label htmlFor="signup-confirm" className="text-foreground font-medium">Confirm Password</Label>
                   <div className="relative group">
