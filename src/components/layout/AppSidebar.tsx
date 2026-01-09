@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -14,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserRole } from '@/hooks/useUserRole';
+import { supabase } from '@/integrations/supabase/client';
 import logo from '@/assets/logo.png';
 
 interface AppSidebarProps {
@@ -35,8 +37,28 @@ const adminNavItem = { icon: Shield, label: 'Admin', path: '/admin' };
 
 export const AppSidebar = ({ isOpen, onClose }: AppSidebarProps) => {
   const location = useLocation();
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const { isAdmin } = useUserRole();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  // Fetch avatar URL
+  useEffect(() => {
+    const fetchAvatar = async () => {
+      if (!user?.id) return;
+      
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (data?.avatar_url) {
+        setAvatarUrl(data.avatar_url);
+      }
+    };
+    
+    fetchAvatar();
+  }, [user?.id]);
 
   // Build nav items based on role
   const navItems = isAdmin 
@@ -46,6 +68,8 @@ export const AppSidebar = ({ isOpen, onClose }: AppSidebarProps) => {
   const handleSignOut = async () => {
     await signOut();
   };
+
+  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
 
   return (
     <>
@@ -119,8 +143,36 @@ export const AppSidebar = ({ isOpen, onClose }: AppSidebarProps) => {
           </ul>
         </nav>
 
-        {/* Logout */}
-        <div className="p-4 border-t border-sidebar-border">
+        {/* User Profile & Logout */}
+        <div className="p-4 border-t border-sidebar-border space-y-3">
+          {/* User info */}
+          <Link 
+            to="/profile" 
+            onClick={onClose}
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-sidebar-accent/50 transition-colors"
+          >
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover border-2 border-magenta-light/30"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-magenta to-magenta-dark flex items-center justify-center text-sm font-display font-bold text-white">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-sidebar-foreground truncate">
+                {displayName}
+              </p>
+              <p className="text-xs text-sidebar-foreground/60 truncate">
+                {user?.email}
+              </p>
+            </div>
+          </Link>
+
+          {/* Logout button */}
           <button
             onClick={handleSignOut}
             className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-destructive transition-all duration-200"
