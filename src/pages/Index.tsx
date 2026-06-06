@@ -8,14 +8,8 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading) {
-      if (user) {
-        navigate('/dashboard');
-      } else {
-        navigate('/auth');
-      }
-    }
-  }, [user, loading, navigate]);
+    navigate('/dashboard');
+  }, [navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
