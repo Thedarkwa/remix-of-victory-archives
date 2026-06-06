@@ -10,7 +10,6 @@ import { AdminRoute } from "@/components/AdminRoute";
 import { AppLayout } from "@/components/layout/AppLayout";
 
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Music from "./pages/Music";
@@ -33,7 +32,6 @@ const App = () => (
           <AudioPlayerProvider>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
               
               {/* Protected routes with AppLayout */}
               <Route
